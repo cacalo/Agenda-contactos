@@ -3,43 +3,43 @@
 } @else {
   <h2 mat-dialog-title>Nuevo contacto</h2>
 }
-<form (ngSubmit)="save()" [formGroup]="form">
+<form (submit)="save(); $event.preventDefault()">
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>Nombre</mat-label>
-      <input matInput type="text" name="firstName" id="firstName" autocomplete="given-name" formControlName="firstName">
+      <input matInput type="text" id="firstName" autocomplete="given-name" [formField]="contactForm.firstName">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Apellido</mat-label>
-      <input matInput type="text" name="lastName" id="lastName" autocomplete="family-name" formControlName="lastName">
+      <input matInput type="text" id="lastName" autocomplete="family-name" [formField]="contactForm.lastName">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Teléfono</mat-label>
-      <input matInput type="text" name="phone" id="phone" autocomplete="tel" formControlName="phone">
+      <input matInput type="text" id="phone" autocomplete="tel" [formField]="contactForm.phone">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Empresa</mat-label>
-      <input matInput type="text" name="company" id="company" autocomplete="organization" formControlName="company">
+      <input matInput type="text" id="company" autocomplete="organization" [formField]="contactForm.company">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Dirección</mat-label>
-      <input matInput type="text" name="address" id="address" autocomplete="address" formControlName="address">
+      <input matInput type="text" id="address" autocomplete="address" [formField]="contactForm.address">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Correo electrónico</mat-label>
-      <input matInput type="email" name="email" id="email" autocomplete="current-email" formControlName="email">
+      <input matInput type="email" id="email" autocomplete="current-email" [formField]="contactForm.email">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Imagen (URL)</mat-label>
-      <input matInput type="text" name="imageUrl" id="imageUrl" formControlName="imageUrl">
+      <input matInput type="text" id="imageUrl" [formField]="contactForm.imageUrl">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Descripcion</mat-label>
-      <textarea matInput type="text" name="text" id="text" formControlName="description"></textarea>
+      <textarea matInput id="text" [formField]="contactForm.description"></textarea>
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button matDialogClose class="error">Cancelar</button>
-    <button mat-button [disabled]="form.invalid" class="tertiary">Guardar</button>
+    <button mat-button type="submit" [disabled]="contactForm().invalid()" class="tertiary">Guardar</button>
   </mat-dialog-actions>
 </form>

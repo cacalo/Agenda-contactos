@@ -1,5 +1,5 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { form, FormField, required, submit } from '@angular/forms/signals';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-group-new-edit',
-  imports: [ReactiveFormsModule,MatFormFieldModule,MatInputModule,MatInputModule,MatDialogModule, MatButtonModule],
+  imports: [FormField,MatFormFieldModule,MatInputModule,MatDialogModule, MatButtonModule],
   templateUrl: './group-new-edit.component.html',
   styleUrl: './group-new-edit.component.scss'
 })
@@ -31,49 +31,59 @@ export class GroupNewEditComponent {
     if(!this.id()) return undefined; //En caso de abrir este componente como una ruta
     return this.groupsService.groups.value()?.find(group => group.id == this.id())
   });
+
+  /** Datos del formulario de grupo */
+  readonly formModel = signal({
+    name: '',
+    description: '',
+  });
+
+  readonly groupForm = form(this.formModel, (schemaPath) => {
+    required(schemaPath.name, { message: 'El nombre es obligatorio' });
+  });
+
   readonly precompletarFormulario = effect(()=> {
     if(this.group()){
-      this.form.controls.name.setValue(this.group()!.name || '');
-      this.form.controls.description.setValue(this.group()!.description || '');
+      this.formModel.set({
+        name: this.group()!.name || '',
+        description: this.group()!.description || '',
+      });
     }
   })
 
   /** Guarda los cambios */
-  async save(){
-    const group:NewGroup | Group = this.group() || GRUPO_VACIO; 
-    group.name = this.form.controls.name.value || '';
-    group.description = this.form.controls.description.value || '';
-    if(!this.group() || !this.group().id){
-      //Creación de grupo
-      const res = await this.groupsService.createGroup(group);
-      if(res.success && res.data) {
-        //Éxito creando grupo
-        this.snackBarService.openSnackbarSuccess(res.message);
-        this.router.navigate(['/groups',res.data.id]);
-        if(this.dialogRef) this.dialogRef.close(true);
+  save(){
+    submit(this.groupForm, async () => {
+      const group:NewGroup | Group = this.group() || GRUPO_VACIO;
+      const values = this.formModel();
+      group.name = values.name;
+      group.description = values.description;
+      if(!this.group() || !this.group().id){
+        //Creación de grupo
+        const res = await this.groupsService.createGroup(group);
+        if(res.success && res.data) {
+          //Éxito creando grupo
+          this.snackBarService.openSnackbarSuccess(res.message);
+          this.router.navigate(['/groups',res.data.id]);
+          if(this.dialogRef) this.dialogRef.close(true);
+        }
+        else {
+          //Error creando grupo
+          this.snackBarService.openSnackbarError(res.message);
+        }
+      } else {
+        //Edición de grupo
+        const res = await this.groupsService.updateGroup(group as Group);
+        if(res.success && res.data){
+          //Éxito editando grupo
+          this.snackBarService.openSnackbarSuccess(res.message);
+          this.groupsService.updateLocalGroup(res.data);
+          if(this.dialogRef) this.dialogRef.close(true);
+          return
+        }
+        //Error editando grupo
+        this.snackBarService.openSnackbarError(res.message);
       }
-      else {
-        //Error creando grupo
-        this.snackBarService.openSnackbarError(res.message); 
-      }
-    } else {
-      //Edición de grupo
-      const res = await this.groupsService.updateGroup(group as Group);
-      if(res.success && res.data){
-        //Éxito editando grupo
-        this.snackBarService.openSnackbarSuccess(res.message);
-        this.groupsService.updateLocalGroup(res.data);
-        if(this.dialogRef) this.dialogRef.close(true);
-        return
-      }
-      //Error editando grupo
-      this.snackBarService.openSnackbarError(res.message);
-    }
+    });
   }
-
-  /** Datos del formulario de grupo */
-  readonly form = new FormGroup({
-    name: new FormControl('',Validators.required),
-    description: new FormControl(''),
-  });
 }

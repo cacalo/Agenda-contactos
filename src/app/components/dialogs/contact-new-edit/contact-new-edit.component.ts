@@ -1,6 +1,6 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { ContactsService } from '../../../services/contacts.service';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { form, FormField, required, email, minLength, submit } from '@angular/forms/signals';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Contact, NewContact, CONTACTO_NUEVO_VACIO } from '../../../interfaces/contact';
@@ -11,7 +11,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 
 @Component({
   selector: 'app-contact-new-edit',
-  imports: [ReactiveFormsModule,MatFormFieldModule,MatInputModule,MatButtonModule,MatDialogModule],
+  imports: [FormField,MatFormFieldModule,MatInputModule,MatButtonModule,MatDialogModule],
   templateUrl: './contact-new-edit.component.html',
   styleUrl: './contact-new-edit.component.scss',
 })
@@ -31,63 +31,82 @@ export class ContactNewEditComponent {
     if(!this.id()) return undefined; //En caso de abrir este componente como una ruta
     return this.contactsService.contacts.value()?.find(contact => contact.id == this.id())
   });
+
+  /** Datos del formulario de contacto */
+  readonly formModel = signal({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    company: '',
+    address: '',
+    email: '',
+    description: '',
+    imageUrl: '',
+  });
+
+  readonly contactForm = form(this.formModel, (schemaPath) => {
+    required(schemaPath.firstName, { message: 'El nombre es obligatorio' });
+    required(schemaPath.phone, { message: 'El teléfono es obligatorio' });
+    minLength(schemaPath.phone, 5);
+    minLength(schemaPath.address, 5);
+    email(schemaPath.email);
+    minLength(schemaPath.imageUrl, 10);
+  });
+
   readonly precompletarFormulario = effect(()=> {
     if(this.contact()){
-      this.form.controls.firstName.setValue(this.contact()!.firstName || '');
-      this.form.controls.lastName.setValue(this.contact()!.lastName || '');
-      this.form.controls.phone.setValue(this.contact()!.phone || '');
-      this.form.controls.company.setValue(this.contact()!.company || '');
+      this.formModel.set({
+        firstName: this.contact()!.firstName || '',
+        lastName: this.contact()!.lastName || '',
+        phone: this.contact()!.phone || '',
+        company: this.contact()!.company || '',
+        address: this.contact()!.address || '',
+        email: this.contact()!.email || '',
+        description: this.contact()!.description || '',
+        imageUrl: this.contact()!.imageUrl || '',
+      });
     }
   })
 
   /** Guarda los cambios */
-  async save(){
-    const contact:NewContact|Contact = this.contact() || {...CONTACTO_NUEVO_VACIO}; 
-    contact.firstName = this.form.controls.firstName.value || '';
-    contact.lastName = this.form.controls.lastName.value || '';
-    contact.phone = this.form.controls.phone.value || '';
-    contact.company = this.form.controls.company.value || '';
-    contact.description = this.form.controls.description.value || '';
-    contact.address = this.form.controls.address.value || '';
-    contact.email = this.form.controls.email.value || '';
-    contact.imageUrl = this.form.controls.imageUrl.value || '';
-    if(!(contact as Contact).id){
-      //Creación de contacto
-      const res = await this.contactsService.createContact(contact);
-      if(res.success && res.data) {
-        //Éxito creando contacto
-        this.snackBarService.openSnackbarSuccess(res.message);
-        this.router.navigate(['/contacts',res.data.id]);
-        if (this.dialogRef) this.dialogRef.close()
-      }
-      else {
-        //Error creando contacto
-        this.snackBarService.openSnackbarError(res.message); 
-      }
-    } else {
-      //Edición de contacto
-      const res = await this.contactsService.updateContact(contact as Contact);
-      if(res.success && res.data){
-        //Éxito editando contacto
-        this.snackBarService.openSnackbarSuccess(res.message);
-        if (this.dialogRef) this.dialogRef.close()
+  save(){
+    submit(this.contactForm, async () => {
+      const contact:NewContact|Contact = this.contact() || {...CONTACTO_NUEVO_VACIO};
+      const values = this.formModel();
+      contact.firstName = values.firstName;
+      contact.lastName = values.lastName;
+      contact.phone = values.phone;
+      contact.company = values.company;
+      contact.description = values.description;
+      contact.address = values.address;
+      contact.email = values.email;
+      contact.imageUrl = values.imageUrl;
+      if(!(contact as Contact).id){
+        //Creación de contacto
+        const res = await this.contactsService.createContact(contact);
+        if(res.success && res.data) {
+          //Éxito creando contacto
+          this.snackBarService.openSnackbarSuccess(res.message);
+          this.router.navigate(['/contacts',res.data.id]);
+          if (this.dialogRef) this.dialogRef.close()
+        }
+        else {
+          //Error creando contacto
+          this.snackBarService.openSnackbarError(res.message);
+        }
       } else {
-        //Error editando contacto
-        this.snackBarService.openSnackbarError(res.message);
+        //Edición de contacto
+        const res = await this.contactsService.updateContact(contact as Contact);
+        if(res.success && res.data){
+          //Éxito editando contacto
+          this.snackBarService.openSnackbarSuccess(res.message);
+          if (this.dialogRef) this.dialogRef.close()
+        } else {
+          //Error editando contacto
+          this.snackBarService.openSnackbarError(res.message);
+        }
       }
-    }
-    this.dialogRef?.close()
+      this.dialogRef?.close()
+    });
   }
-
-  /** Datos del formulario de contacto */
-  readonly form = new FormGroup({
-    firstName: new FormControl('',Validators.required),
-    lastName: new FormControl(''),
-    phone: new FormControl('',[Validators.required,Validators.minLength(5)]),
-    company: new FormControl(''),
-    address: new FormControl('',Validators.minLength(5)),
-    email: new FormControl('',Validators.email),
-    description: new FormControl(''),
-    imageUrl: new FormControl('',Validators.minLength(10)),
-  });
 }

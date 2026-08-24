@@ -3,19 +3,19 @@
 } @else {
   <h2 mat-dialog-title>Nuevo grupo</h2>
 }
-<form (ngSubmit)="save()" [formGroup]="form">
+<form (submit)="save(); $event.preventDefault()">
   <mat-dialog-content class="flex-column">
   <mat-form-field>
     <mat-label>Nombre</mat-label>
-    <input matInput type="text" name="name" id="name" [autocomplete]="'name'" formControlName="name">
+    <input matInput type="text" id="name" autocomplete="name" [formField]="groupForm.name">
   </mat-form-field>
   <mat-form-field>
     <mat-label>Descripcion</mat-label>
-    <textarea matInput type="text" name="text" id="text" formControlName="description"></textarea>
+    <textarea matInput id="text" [formField]="groupForm.description"></textarea>
   </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button matDialogClose class="error">Cancelar</button>
-    <button mat-button type="submit" [disabled]="form.invalid" class="tertiary">Guardar</button>
+    <button mat-button type="submit" [disabled]="groupForm().invalid()" class="tertiary">Guardar</button>
   </mat-dialog-actions>
 </form>

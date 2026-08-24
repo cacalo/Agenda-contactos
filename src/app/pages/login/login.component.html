@@ -1,16 +1,16 @@
 <div id="container">
     <mat-card>
       <h1>Agenda de contactos</h1>
-      <form #loginForm="ngForm" (ngSubmit)="login(loginForm.value)" class="flex-column">
+      <form (submit)="onSubmit(); $event.preventDefault()" class="flex-column">
         <mat-form-field>
           <mat-label>Correo electrónico</mat-label>
-          <input matInput autocomplete="email" type="email" name="email" id="email" required="true" [minLength]="4" ngModel [autocomplete]="'email'">
+          <input matInput autocomplete="email" type="email" id="email" [formField]="loginForm.email">
         </mat-form-field>
         <mat-form-field>
           <mat-label>Contraseña</mat-label>
-          <input matInput autocomplete="current-password" type="password" name="password" id="password" required="true" [minLength]="8" ngModel [autocomplete]="'current-password'">
+          <input matInput autocomplete="current-password" type="password" id="password" [formField]="loginForm.password">
         </mat-form-field>
-        <button mat-button [disabled]="!loginForm.valid">Login</button>
+        <button mat-button type="submit" [disabled]="loginForm().invalid()">Login</button>
         <p>¿No tenés cuenta? <a [routerLink]="['/register']">Registrate</a>.</p>
       </form>
     </mat-card>
