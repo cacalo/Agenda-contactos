@@ -22,11 +22,11 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class ContactsComponent implements OnInit{
 
-  authService = inject(AuthService);
-  contactsService = inject(ContactsService);
-  groupsService = inject(GroupsService);
+  readonly authService = inject(AuthService);
+  readonly contactsService = inject(ContactsService);
+  readonly groupsService = inject(GroupsService);
   readonly titleService = inject(TitleService);
-  dialog = inject(MatDialog);
+  readonly dialog = inject(MatDialog);
   
   ngOnInit(): void {
     this.titleService.title.set("Agenda");

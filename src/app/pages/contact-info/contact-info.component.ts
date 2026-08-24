@@ -24,17 +24,17 @@ import { DeleteComponent } from '../../components/dialogs/delete/delete.componen
 })
 export class ContactInfoComponent {
 
-  contactsService = inject(ContactsService);
-  groupsService = inject(GroupsService);
-  snackBarService = inject(SnackBarService)
-  id = input.required<number>();
-  currentGroups = computed(()=> this.groupsService.groups.value()?.filter(grupo => this.contact.value()?.groupIds.includes(grupo.id)))
-  router = inject(Router);
-  titleService = inject(TitleService);
-  dialog = inject(MatDialog);
+  readonly contactsService = inject(ContactsService);
+  readonly groupsService = inject(GroupsService);
+  readonly snackBarService = inject(SnackBarService)
+  readonly id = input.required<number>();
+  readonly currentGroups = computed(()=> this.groupsService.groups.value()?.filter(grupo => this.contact.value()?.groupIds.includes(grupo.id)))
+  readonly router = inject(Router);
+  readonly titleService = inject(TitleService);
+  readonly dialog = inject(MatDialog);
 
   /** Datos del contacto actual */
-  contact:ResourceRef<Contact | undefined> = resource({
+  readonly contact:ResourceRef<Contact | undefined> = resource({
       params: ()=>  ({contactId: this.id()}),
       loader: async({params})=> {
         const res = await this.contactsService.getById(params.contactId)
@@ -45,9 +45,9 @@ export class ContactInfoComponent {
     })
 
     /** Cambia el título cuando cambian los datos del contacto */
-      changeTitle = effect(()=> {
-        if(this.contact.hasValue()) this.titleService.title.set(`${this.contact.value()!.firstName} ${this.contact.value()!.lastName}` )
-      })
+    readonly changeTitle = effect(()=> {
+      if(this.contact.hasValue()) this.titleService.title.set(`${this.contact.value()!.firstName} ${this.contact.value()!.lastName}` )
+    })
     
 
     /** Marca y desmarca como favorito al contacto actual */
@@ -82,8 +82,8 @@ export class ContactInfoComponent {
     }
 
     showEditDialog(){
-        this.dialog.open(ContactNewEditComponent,{data:this.contact.value()})
-      }
+      this.dialog.open(ContactNewEditComponent,{data:this.contact.value()})
+    }
     
     showDeleteDialog(){
       this.dialog.open(DeleteComponent,{data:{resource:"contacto"}}).afterClosed().subscribe(async (resDialog) =>  {

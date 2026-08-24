@@ -16,22 +16,22 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './group-new-edit.component.scss'
 })
 export class GroupNewEditComponent {
-  groupsService = inject(GroupsService);
-  router = inject(Router);
-  snackBarService = inject(SnackBarService)
+  readonly groupsService = inject(GroupsService);
+  readonly router = inject(Router);
+  readonly snackBarService = inject(SnackBarService)
   readonly dialogRef = inject(MatDialogRef<GroupNewEditComponent>);
-  data = inject(MAT_DIALOG_DATA);
+  readonly data = inject(MAT_DIALOG_DATA);
 
   /** Input de ID, se utiliza cuando entramos a este componente con parámetros de ruta para editar un contacto */
-  id = input<number>();
+  readonly id = input<number>();
 
   /** Contiene el grupo a editar */
-  group = computed<Group>(()=> {
+  readonly group = computed<Group>(()=> {
     if(this.data) return this.data; //En caso de abrir este componente como un modal
     if(!this.id()) return undefined; //En caso de abrir este componente como una ruta
     return this.groupsService.groups.value()?.find(group => group.id == this.id())
   });
-  precompletarFormulario = effect(()=> {
+  readonly precompletarFormulario = effect(()=> {
     if(this.group()){
       this.form.controls.name.setValue(this.group()!.name || '');
       this.form.controls.description.setValue(this.group()!.description || '');
@@ -72,7 +72,7 @@ export class GroupNewEditComponent {
   }
 
   /** Datos del formulario de grupo */
-  form = new FormGroup({
+  readonly form = new FormGroup({
     name: new FormControl('',Validators.required),
     description: new FormControl(''),
   });

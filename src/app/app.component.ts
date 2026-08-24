@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LoadingService } from './services/loading.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,5 +10,5 @@ import { AuthService } from './services/auth.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  loadingService = inject(LoadingService);
+  readonly loadingService = inject(LoadingService);
 }

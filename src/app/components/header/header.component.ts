@@ -14,5 +14,5 @@ import { TitleService } from '../../services/title.service';
 })
 export class HeaderComponent {
   readonly titleService = inject(TitleService);
-  toggleSidebar = output();
+  readonly toggleSidebar = output();
 }

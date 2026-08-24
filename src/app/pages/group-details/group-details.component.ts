@@ -7,7 +7,6 @@ import { ContactsTableComponent } from "../../components/contacts-table/contacts
 import { TitleService } from '../../services/title.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Dialog } from '@angular/cdk/dialog';
 import { GroupNewEditComponent } from '../../components/dialogs/group-new-edit/group-new-edit.component';
 import { DeleteComponent } from '../../components/dialogs/delete/delete.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,15 +21,15 @@ import { Router } from '@angular/router';
 })
 export class GroupDetailsComponent{
 
-  id = input.required<number>()
-  snackBarService = inject(SnackBarService)
-  groupsService = inject(GroupsService);
-  titleService = inject(TitleService);
-  dialog = inject(MatDialog);
-  router = inject(Router);
+  readonly id = input.required<number>()
+  readonly snackBarService = inject(SnackBarService)
+  readonly groupsService = inject(GroupsService);
+  readonly titleService = inject(TitleService);
+  readonly dialog = inject(MatDialog);
+  readonly router = inject(Router);
 
   /** Datos del grupo actual */
-  group:ResourceRef<Group | undefined> = resource({
+  readonly group:ResourceRef<Group | undefined> = resource({
     params: ()=>  ({groupId: this.id()}),
     loader: async({params})=> {
       const res = await this.groupsService.getById(params.groupId)
@@ -41,7 +40,7 @@ export class GroupDetailsComponent{
   })
 
   /** Cambia el título cuando cambian los datos del grupo */
-  changeTitle = effect(()=> {
+  readonly changeTitle = effect(()=> {
     if(this.group.hasValue()) this.titleService.title.set(this.group.value()!.name)
   })
 

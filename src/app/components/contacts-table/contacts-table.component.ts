@@ -10,6 +10,6 @@ import { MatDividerModule } from '@angular/material/divider';
   styleUrl: './contacts-table.component.scss'
 })
 export class ContactsTableComponent {
-  contacts = input.required<Contact[] | undefined>();
-  loading = input<boolean>(false);
+  readonly contacts = input.required<Contact[] | undefined>();
+  readonly loading = input<boolean>(false);
 }

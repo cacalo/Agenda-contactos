@@ -7,7 +7,6 @@ import { ActivatedRoute, Router, RouterModule, RouterOutlet } from '@angular/rou
 import { AuthService } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { GroupsService } from '../../services/groups.service';
-import { Dialog } from '@angular/cdk/dialog';
 import { GroupNewEditComponent } from '../../components/dialogs/group-new-edit/group-new-edit.component';
 import { ContactsService } from '../../services/contacts.service';
 import {MatTooltip} from '@angular/material/tooltip';
@@ -20,13 +19,13 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrl: './logged.component.scss'
 })
 export class LoggedComponent implements OnInit {
-  authService=inject(AuthService);
-  expanded=signal(false);
-  groupsService = inject(GroupsService);
-  dialog = inject(MatDialog);
-  contactsService = inject(ContactsService);
-  router = inject(Router);
-  activatedRoute = inject(ActivatedRoute);
+   readonly authService=inject(AuthService);
+  readonly expanded=signal(false);
+  readonly groupsService = inject(GroupsService);
+  readonly dialog = inject(MatDialog);
+  readonly contactsService = inject(ContactsService);
+  readonly router = inject(Router);
+  readonly activatedRoute = inject(ActivatedRoute);
 
   ngOnInit(): void {
     //Escucho eventos de navigationEnd para ver si estoy dentro de la pantalla de un contacto
@@ -61,5 +60,5 @@ export class LoggedComponent implements OnInit {
   }
   
   /** Dice si mostramos el botón de exportar o no */
-  showExport = signal(true);
+  readonly showExport = signal(true);
 }

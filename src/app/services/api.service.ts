@@ -1,13 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { LoadingService } from './loading.service';
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ApiService {
-  loadingService = inject(LoadingService);
+  readonly loadingService = inject(LoadingService);
 
   /** Realiza un GET autenticado a nuestro backend */
   async get(URI:string){

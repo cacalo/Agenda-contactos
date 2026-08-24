@@ -16,22 +16,22 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
   styleUrl: './contact-new-edit.component.scss',
 })
 export class ContactNewEditComponent {
-  contactsService = inject(ContactsService);
-  router = inject(Router);
-  snackBarService = inject(SnackBarService)
+  readonly contactsService = inject(ContactsService);
+  readonly router = inject(Router);
+  readonly snackBarService = inject(SnackBarService)
   readonly dialogRef = inject(MatDialogRef<ContactNewEditComponent>);
-  data = inject(MAT_DIALOG_DATA);
+  readonly data = inject(MAT_DIALOG_DATA);
 
   /** Input de ID, se utiliza cuando entramos a este componente con parámetros de ruta para editar un contacto */
-  id = input<number>();
+  readonly id = input<number>();
 
   /** Contiene el contacto a editar */
-  contact = computed(()=> {
+  readonly contact = computed(()=> {
     if(this.data) return this.data; //En caso de abrir este componente como un modal
     if(!this.id()) return undefined; //En caso de abrir este componente como una ruta
     return this.contactsService.contacts.value()?.find(contact => contact.id == this.id())
   });
-  precompletarFormulario = effect(()=> {
+  readonly precompletarFormulario = effect(()=> {
     if(this.contact()){
       this.form.controls.firstName.setValue(this.contact()!.firstName || '');
       this.form.controls.lastName.setValue(this.contact()!.lastName || '');
@@ -80,7 +80,7 @@ export class ContactNewEditComponent {
   }
 
   /** Datos del formulario de contacto */
-  form = new FormGroup({
+  readonly form = new FormGroup({
     firstName: new FormControl('',Validators.required),
     lastName: new FormControl(''),
     phone: new FormControl('',[Validators.required,Validators.minLength(5)]),

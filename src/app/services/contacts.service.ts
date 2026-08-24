@@ -1,4 +1,4 @@
-import { inject, Injectable, resource, ResourceRef } from '@angular/core';
+import { inject, resource, ResourceRef, Service } from '@angular/core';
 import { ApiService } from './api.service';
 import { Contact, NewContact, ContactGetDto, ContactPostDto } from '../interfaces/contact';
 import { ResponseData } from '../interfaces/responses';
@@ -7,12 +7,10 @@ import { SnackBarService } from './snack-bar.service';
 import { contactGetDtoToContact, contactToContactPostDto } from '../utils/maps/contactMap';
 import { descargarCSV } from '../utils/CSV';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ContactsService extends ApiService {
-  authService = inject(AuthService);
-  snackbarService = inject(SnackBarService);
+  readonly authService = inject(AuthService);
+  readonly snackbarService = inject(SnackBarService);
   readonly resource = "Contacts";
 
   /** Recurso con todos los contactos de un usuario */

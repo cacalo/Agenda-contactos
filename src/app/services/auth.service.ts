@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Service, signal } from '@angular/core';
 import { LoginData } from '../interfaces/login';
 import { ApiService } from './api.service';
 import { RegisterData } from '../interfaces/register';
@@ -8,12 +8,10 @@ import { ResponseData } from '../interfaces/responses';
 import { decodeToken } from '../utils/token';
 import { TokenClaims } from '../interfaces/token';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class AuthService extends ApiService {
 
-  router = inject(Router);
+  readonly router = inject(Router);
   logoutTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(){
@@ -23,7 +21,7 @@ export class AuthService extends ApiService {
   }
 
   /** Obtiene información del usuario a partir del claim */
-  user = computed<User|null>(()=> {
+  readonly user = computed<User|null>(()=> {
     if(!this.token()) return null;
     const tokenDecodificado:TokenClaims = decodeToken(this.token()!);
     const user:User = {
@@ -35,7 +33,7 @@ export class AuthService extends ApiService {
   })
 
   /** Desconecto al usuario si se venció su sesión */
-  vencimientoToken = effect(()=> {
+  readonly vencimientoToken = effect(()=> {
     if(!this.token()) return this.logout();
     const tokenDecodificado = decodeToken(this.token()!);
     if(!tokenDecodificado.exp || new Date(tokenDecodificado.exp*1000) < new Date()){

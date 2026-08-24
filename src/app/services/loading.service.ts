@@ -1,11 +1,9 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, Service, signal } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LoadingService {
   /** Lista que contiene los items que se están cargando */
-  loadList = signal<string[]>([])
+  readonly loadList = signal<string[]>([])
 
   /** Señal que muestra si algo está siendo cargado */
   loading = computed<boolean>(()=> this.loadList().length ? true : false)

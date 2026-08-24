@@ -1,4 +1,4 @@
-import { inject, Injectable, resource, ResourceRef } from '@angular/core';
+import { inject, resource, ResourceRef, Service } from '@angular/core';
 import { AuthService } from './auth.service';
 import { SnackBarService } from './snack-bar.service';
 import { Group, GroupGetDto, GroupPostDto, NewGroup } from '../interfaces/group';
@@ -8,16 +8,16 @@ import { groupGetDtoToGroup, groupToGroupPostDto } from '../utils/maps/groupMap'
 import { descargarCSV } from '../utils/CSV';
 import { ContactsService } from './contacts.service';
 
-@Injectable({providedIn: 'root'})
+@Service()
 export class GroupsService extends ApiService {
 
-  authService = inject(AuthService);
-  snackbarService = inject(SnackBarService);
+  readonly authService = inject(AuthService);
+  readonly snackbarService = inject(SnackBarService);
   readonly resource = "Groups";
-  contactsService = inject(ContactsService);
+  readonly contactsService = inject(ContactsService);
 
   /** Recurso con todos los grupos de un usuario */
-  groups:ResourceRef<Group[]> = resource({
+  readonly groups:ResourceRef<Group[]> = resource({
     params: ()=> ({token: this.authService.token()}),
     loader: async({params})=> {
       if(!params.token) return [];

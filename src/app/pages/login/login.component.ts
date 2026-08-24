@@ -16,9 +16,9 @@ import { MatCard } from '@angular/material/card';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  authService = inject(AuthService);
-  router = inject(Router);
-  snackBarService = inject(SnackBarService)
+  readonly authService = inject(AuthService);
+  readonly router = inject(Router);
+  readonly snackBarService = inject(SnackBarService)
 
   /** Intenta loguear al usuario con el back */
   async login(form:LoginData){

@@ -18,18 +18,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './contact-summary.component.scss'
 })
 export class ContactSummaryComponent {
-  contact = input.required<Contact>();
-  groupsService = inject(GroupsService);
-  router = inject(Router);
+  readonly contact = input.required<Contact>();
+  readonly groupsService = inject(GroupsService);
+  readonly router = inject(Router);
   readonly dialog = inject(MatDialog);
-  contactService = inject(ContactsService);
+  readonly contactService = inject(ContactsService);
 
-  showEditDialog(e:Event){
+  readonly showEditDialog = (e:Event) => {
     e.stopPropagation(); // Permite que el click que hice no afecte otros elementos clickeables que estén en la misma posición que este elemento.
     this.dialog.open(ContactNewEditComponent,{data:this.contact()})
   }
 
-  showDeleteDialog(e:Event){
+  readonly showDeleteDialog = (e:Event) => {
     e.stopPropagation(); // Permite que el click que hice no afecte otros elementos clickeables que estén en la misma posición que este elemento.
     this.dialog.open(DeleteComponent,{data:{resource:"contacto"}}).afterClosed().subscribe(res => {
       if(res) this.contactService.deleteContact(this.contact().id);

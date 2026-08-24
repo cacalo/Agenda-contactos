@@ -1,9 +1,7 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TitleService {
   /** Señal que guarda modifica el título del header de la aplicación */
-  title = signal("Agenda");
+  readonly title = signal("Agenda");
 }
